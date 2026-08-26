@@ -378,6 +378,10 @@ new #[Title('Laporan')] class extends Component
                 </div>
             </div>
 
+            <div class="mb-6">
+                <livewire:penimbangan.grafik-kms :anak-id="$dataAnak->id" :hide-header="true" :hide-table="true" wire:key="kms-{{ $dataAnak->id }}" />
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 {{-- Penimbangan --}}
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">

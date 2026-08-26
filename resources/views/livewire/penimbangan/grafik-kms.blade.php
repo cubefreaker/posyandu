@@ -13,9 +13,13 @@ new class extends Component
     public array $chartDataTb = [];
     public array $kmsBandsBb = [];
     public array $kmsBandsTb = [];
+    public bool $hideHeader = false;
+    public bool $hideTable = false;
 
-    public function mount(int $anakId): void
+    public function mount(int $anakId, bool $hideHeader = false, bool $hideTable = false): void
     {
+        $this->hideHeader = $hideHeader;
+        $this->hideTable = $hideTable;
         $this->anak = Anak::with(['ibu', 'penimbangan'])->findOrFail($anakId);
 
         $riwayat = $this->anak->penimbangan()
@@ -83,6 +87,7 @@ new class extends Component
 };
 ?>
 <div>
+    @if(!$hideHeader)
     <div class="flex items-center gap-3 mb-6">
         <a href="{{ route('penimbangan.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
             <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -92,14 +97,15 @@ new class extends Component
             <p class="text-sm text-slate-500">Ibu: {{ $anak->ibu->nama ?? '-' }} · Usia: {{ $anak->usia }}</p>
         </div>
     </div>
+    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {{-- Grafik BB --}}
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
             <h3 class="font-heading font-semibold text-slate-700 mb-4">Berat Badan per Kunjungan (kg)</h3>
             @if(count($chartDataBb) > 0)
-                <div style="height: 350px; position: relative;">
-                    <canvas id="chartBb"></canvas>
+                <div style="height: 350px; position: relative;" wire:ignore>
+                    <canvas id="chartBb-{{ $anak->id }}"></canvas>
                 </div>
             @else
                 <div class="flex flex-col items-center justify-center py-12 text-slate-400">
@@ -113,8 +119,8 @@ new class extends Component
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
             <h3 class="font-heading font-semibold text-slate-700 mb-4">Tinggi Badan per Kunjungan (cm)</h3>
             @if(count($chartDataTb) > 0)
-                <div style="height: 350px; position: relative;">
-                    <canvas id="chartTb"></canvas>
+                <div style="height: 350px; position: relative;" wire:ignore>
+                    <canvas id="chartTb-{{ $anak->id }}"></canvas>
                 </div>
             @else
                 <div class="flex flex-col items-center justify-center py-12 text-slate-400">
@@ -125,6 +131,7 @@ new class extends Component
         </div>
     </div>
 
+    @if(!$hideTable)
     {{-- Tabel riwayat --}}
     <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100">
@@ -176,152 +183,160 @@ new class extends Component
             </table>
         </div>
     </div>
+    @endif
 
     @if(count($chartDataBb) > 0)
+    @assets
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    @endassets
+
+    @script
     <script>
-        const childDataBb = @json($chartDataBb);
-        const childDataTb = @json($chartDataTb);
-        const bandsBb = @json($kmsBandsBb);
-        const bandsTb = @json($kmsBandsTb);
-        const namaAnak = "{{ $anak->nama }}";
+        const initKmsChart = () => {
+            if (typeof Chart === 'undefined') {
+                setTimeout(initKmsChart, 100);
+                return;
+            }
 
-        const getBandData = (bands, key) => bands.map(b => ({ x: b.x, y: b[key] }));
+            const childDataBb = $wire.chartDataBb;
+            const childDataTb = $wire.chartDataTb;
+            const bandsBb = $wire.kmsBandsBb;
+            const bandsTb = $wire.kmsBandsTb;
+            const namaAnak = "{{ $anak->nama }}";
 
-        const createKmsChart = (elementId, childData, bands, yLabel) => {
-            return new Chart(document.getElementById(elementId), {
-                type: 'line',
-                data: {
-                    datasets: [
-                        {
-                            label: '< -3 SD (Buruk)',
-                            data: getBandData(bands, 'minus3'),
-                            borderColor: 'transparent',
-                            backgroundColor: 'rgba(239, 68, 68, 0.15)', // Red
-                            fill: 'origin',
-                            pointRadius: 0,
-                            borderWidth: 0,
-                            tension: 0.4
-                        },
-                        {
-                            label: '-3 SD s/d -2 SD (Kurang)',
-                            data: getBandData(bands, 'minus2'),
-                            borderColor: 'rgba(234, 179, 8, 0.5)', // Yellow line
-                            backgroundColor: 'rgba(234, 179, 8, 0.15)',
-                            fill: 0, // Fill to minus3 (index 0)
-                            pointRadius: 0,
-                            borderWidth: 1,
-                            borderDash: [5, 5],
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Median',
-                            data: getBandData(bands, 'median'),
-                            borderColor: '#22C55E', // Green dashed
-                            backgroundColor: 'transparent',
-                            fill: false,
-                            pointRadius: 0,
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            tension: 0.4
-                        },
-                        {
-                            label: '-2 SD s/d +2 SD (Normal)',
-                            data: getBandData(bands, 'plus2'),
-                            borderColor: 'rgba(34, 197, 94, 0.5)', // Green line
-                            backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                            fill: 1, // Fill to minus2 (index 1)
-                            pointRadius: 0,
-                            borderWidth: 1,
-                            tension: 0.4
-                        },
-                        {
-                            label: '+2 SD s/d +3 SD (Lebih)',
-                            data: getBandData(bands, 'plus3'),
-                            borderColor: 'rgba(249, 115, 22, 0.5)', // Orange line
-                            backgroundColor: 'rgba(249, 115, 22, 0.15)',
-                            fill: 3, // Fill to plus2 (index 3)
-                            pointRadius: 0,
-                            borderWidth: 1,
-                            borderDash: [5, 5],
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Pertumbuhan ' + namaAnak,
-                            data: childData,
-                            borderColor: '#2563EB', // Blue line for child
-                            backgroundColor: '#1D4ED8',
-                            pointBackgroundColor: '#1D4ED8',
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                boxWidth: 6,
-                                font: { size: 11 }
+            const getBandData = (bands, key) => bands.map(b => ({ x: b.x, y: b[key] }));
+
+            const createKmsChart = (elementId, childData, bands, yLabel) => {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+                
+                let existingChart = Chart.getChart(elementId);
+                if (existingChart) existingChart.destroy();
+
+                return new Chart(el, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: '< -3 SD (Buruk)',
+                                data: getBandData(bands, 'minus3'),
+                                borderColor: 'transparent',
+                                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                fill: 'origin',
+                                pointRadius: 0,
+                                borderWidth: 0,
+                                tension: 0.4
+                            },
+                            {
+                                label: '-3 SD s/d -2 SD (Kurang)',
+                                data: getBandData(bands, 'minus2'),
+                                borderColor: 'rgba(234, 179, 8, 0.5)',
+                                backgroundColor: 'rgba(234, 179, 8, 0.15)',
+                                fill: 0,
+                                pointRadius: 0,
+                                borderWidth: 1,
+                                borderDash: [5, 5],
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Median',
+                                data: getBandData(bands, 'median'),
+                                borderColor: '#22C55E',
+                                backgroundColor: 'transparent',
+                                fill: false,
+                                pointRadius: 0,
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                tension: 0.4
+                            },
+                            {
+                                label: '-2 SD s/d +2 SD (Normal)',
+                                data: getBandData(bands, 'plus2'),
+                                borderColor: 'rgba(34, 197, 94, 0.5)',
+                                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                                fill: 1,
+                                pointRadius: 0,
+                                borderWidth: 1,
+                                tension: 0.4
+                            },
+                            {
+                                label: '+2 SD s/d +3 SD (Lebih)',
+                                data: getBandData(bands, 'plus3'),
+                                borderColor: 'rgba(249, 115, 22, 0.5)',
+                                backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                                fill: 3,
+                                pointRadius: 0,
+                                borderWidth: 1,
+                                borderDash: [5, 5],
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Pertumbuhan ' + namaAnak,
+                                data: childData,
+                                borderColor: '#2563EB',
+                                backgroundColor: '#1D4ED8',
+                                pointBackgroundColor: '#1D4ED8',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.3
                             }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    if (context.datasetIndex === 5) {
-                                        return context.raw.tanggal + ': ' + context.raw.y + ' ' + (yLabel.includes('Berat') ? 'kg' : 'cm');
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    boxWidth: 6,
+                                    font: { size: 11 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.datasetIndex === 5) {
+                                            return context.raw.tanggal + ': ' + context.raw.y + ' ' + (yLabel.includes('Berat') ? 'kg' : 'cm');
+                                        }
+                                        return context.dataset.label + ': ' + context.raw.y.toFixed(1);
                                     }
-                                    return context.dataset.label + ': ' + context.raw.y.toFixed(1);
                                 }
                             }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            title: {
-                                display: true,
-                                text: 'Usia (Bulan)'
-                            },
-                            min: 0,
-                            max: 60,
-                            ticks: {
-                                stepSize: 6
-                            },
-                            grid: { color: 'rgba(0,0,0,0.04)' }
                         },
-                        y: {
-                            title: {
-                                display: true,
-                                text: yLabel
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom',
+                                title: { display: true, text: 'Usia (Bulan)' },
+                                min: 0, max: 60,
+                                ticks: { stepSize: 6 },
+                                grid: { color: 'rgba(0,0,0,0.04)' }
                             },
-                            grid: { color: 'rgba(0,0,0,0.04)' }
-                        }
-                    },
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                }
-            });
+                            y: {
+                                title: { display: true, text: yLabel },
+                                grid: { color: 'rgba(0,0,0,0.04)' }
+                            }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                    }
+                });
+            };
+
+            createKmsChart('chartBb-{{ $anak->id }}', childDataBb, bandsBb, 'Berat Badan (kg)');
+            createKmsChart('chartTb-{{ $anak->id }}', childDataTb, bandsTb, 'Tinggi Badan (cm)');
         };
 
-        if (document.getElementById('chartBb')) {
-            createKmsChart('chartBb', childDataBb, bandsBb, 'Berat Badan (kg)');
-        }
-        if (document.getElementById('chartTb')) {
-            createKmsChart('chartTb', childDataTb, bandsTb, 'Tinggi Badan (cm)');
-        }
+        initKmsChart();
     </script>
+    @endscript
     @endif
 </div>
 
