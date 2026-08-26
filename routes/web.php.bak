@@ -1,0 +1,55 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LaporanController;
+use App\Livewire\Dashboard;
+use App\Livewire\DataIbu;
+use App\Livewire\DataAnak;
+use App\Livewire\Penimbangan as PenimbanganLw;
+use App\Livewire\Imunisasi as ImunisasiLw;
+use App\Livewire\Vitamin as VitaminLw;
+use App\Livewire\Laporan;
+use Illuminate\Support\Facades\Route;
+
+// Auth
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Redirect root to dashboard
+Route::get('/', fn () => redirect()->route('dashboard'));
+
+// Protected routes
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+    // Data Ibu
+    Route::get('/data-ibu', DataIbu\Index::class)->name('data-ibu.index');
+    Route::get('/data-ibu/tambah', DataIbu\Form::class)->name('data-ibu.create');
+    Route::get('/data-ibu/{id}/edit', DataIbu\Form::class)->name('data-ibu.edit');
+
+    // Data Anak
+    Route::get('/data-anak', DataAnak\Index::class)->name('data-anak.index');
+    Route::get('/data-anak/tambah', DataAnak\Form::class)->name('data-anak.create');
+    Route::get('/data-anak/{id}/edit', DataAnak\Form::class)->name('data-anak.edit');
+
+    // Penimbangan
+    Route::get('/penimbangan', PenimbanganLw\Index::class)->name('penimbangan.index');
+    Route::get('/penimbangan/tambah', PenimbanganLw\Form::class)->name('penimbangan.create');
+    Route::get('/penimbangan/{id}/edit', PenimbanganLw\Form::class)->name('penimbangan.edit');
+    Route::get('/penimbangan/grafik/{anakId}', PenimbanganLw\GrafikKms::class)->name('penimbangan.grafik');
+
+    // Imunisasi
+    Route::get('/imunisasi', ImunisasiLw\Index::class)->name('imunisasi.index');
+    Route::get('/imunisasi/tambah', ImunisasiLw\Form::class)->name('imunisasi.create');
+    Route::get('/imunisasi/{id}/edit', ImunisasiLw\Form::class)->name('imunisasi.edit');
+
+    // Vitamin
+    Route::get('/vitamin', VitaminLw\Index::class)->name('vitamin.index');
+    Route::get('/vitamin/tambah', VitaminLw\Form::class)->name('vitamin.create');
+    Route::get('/vitamin/{id}/edit', VitaminLw\Form::class)->name('vitamin.edit');
+
+    // Laporan
+    Route::get('/laporan', Laporan\Index::class)->name('laporan.index');
+    Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
+});
