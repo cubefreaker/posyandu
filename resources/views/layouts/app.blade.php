@@ -29,6 +29,9 @@
                 <x-nav-link href="{{ route('imunisasi.index') }}" icon="syringe" :active="request()->routeIs('imunisasi.*')">Imunisasi</x-nav-link>
                 <x-nav-link href="{{ route('vitamin.index') }}" icon="pill" :active="request()->routeIs('vitamin.*')">Vitamin</x-nav-link>
                 <x-nav-link href="{{ route('laporan.index') }}" icon="file-text" :active="request()->routeIs('laporan.*')">Laporan</x-nav-link>
+                @if(auth()->user()->role === 'admin')
+                    <x-nav-link href="{{ route('user-management.index') }}" icon="users-cog" :active="request()->routeIs('user-management.*')">User Management</x-nav-link>
+                @endif
             </nav>
 
             {{-- User Info --}}

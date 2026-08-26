@@ -45,4 +45,11 @@ Route::middleware('auth')->group(function () {
     // Laporan
     Route::livewire('/laporan', 'laporan.index')->name('laporan.index');
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
+
+    // Manajemen User (Admin Only)
+    Route::middleware(\App\Http\Middleware\IsAdmin::class)->group(function () {
+        Route::livewire('/user-management', 'user-management.index')->name('user-management.index');
+        Route::livewire('/user-management/tambah', 'user-management.form')->name('user-management.create');
+        Route::livewire('/user-management/{id}/edit', 'user-management.form')->name('user-management.edit');
+    });
 });
