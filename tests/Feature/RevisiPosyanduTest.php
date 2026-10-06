@@ -161,4 +161,89 @@ class RevisiPosyanduTest extends TestCase
         $response->assertSee('tipe=harian');
         $response->assertSee('Cetak Laporan Hari Ini');
     }
+
+    public function test_pelayanan_toggle_form_baru_and_batal()
+    {
+        $this->actingAs($this->kader);
+
+        \Livewire\Livewire::test('pelayanan.index')
+            ->assertSet('isFormBaru', false)
+            ->call('toggleFormBaru')
+            ->assertSet('isFormBaru', true)
+            ->call('simpanWargaBaru')
+            ->assertHasErrors(['nik_ibu', 'nama_ibu', 'nama_anak'])
+            ->call('batalFormBaru')
+            ->assertSet('isFormBaru', false)
+            ->assertHasNoErrors();
+    }
+
+    public function test_pelayanan_nik_ibu_live_autofill_for_existing_mother()
+    {
+        $this->actingAs($this->kader);
+
+        $ibu = Ibu::create([
+            'nik' => '3201123456789099',
+            'nama' => 'Ibu Maria Ulfah',
+            'tanggal_lahir' => '1994-08-20',
+            'alamat' => 'Desa Melati No. 5',
+            'telepon' => '081234567899',
+        ]);
+
+        \Livewire\Livewire::test('pelayanan.index')
+            ->call('toggleFormBaru')
+            ->set('nik_ibu', '3201123456789099')
+            ->assertSet('existingIbuFound', true)
+            ->assertSet('nama_ibu', 'Ibu Maria Ulfah')
+            ->assertSet('alamat_ibu', 'Desa Melati No. 5');
+    }
+
+    public function test_pelayanan_simpan_warga_baru_creates_and_selects_child()
+    {
+        $this->actingAs($this->kader);
+
+        \Livewire\Livewire::test('pelayanan.index')
+            ->call('toggleFormBaru')
+            ->set('nik_ibu', '3201555544443333')
+            ->set('nama_ibu', 'Ibu Ratna Sari')
+            ->set('tanggal_lahir_ibu', '1995-10-10')
+            ->set('alamat_ibu', 'Dusun Cempaka RT 02')
+            ->set('nama_anak', 'Ananda Rizky')
+            ->set('tanggal_lahir_anak', now()->subMonths(10)->format('Y-m-d'))
+            ->set('jenis_kelamin_anak', 'L')
+            ->call('simpanWargaBaru')
+            ->assertHasNoErrors()
+            ->assertSet('isFormBaru', false)
+            ->assertSet('jenis_vitamin', 'kapsul_biru');
+
+        $this->assertDatabaseHas('ibu', ['nik' => '3201555544443333']);
+        $this->assertDatabaseHas('anak', ['nama' => 'Ananda Rizky']);
+    }
+
+    public function test_pelayanan_simpan_anak_baru_for_existing_mother_succeeds()
+    {
+        $this->actingAs($this->kader);
+
+        $ibu = Ibu::create([
+            'nik' => '3201777788889999',
+            'nama' => 'Ibu Nurhaliza',
+            'tanggal_lahir' => '1993-02-14',
+            'alamat' => 'Dusun Kenanga RT 01',
+        ]);
+
+        \Livewire\Livewire::test('pelayanan.index')
+            ->call('toggleFormBaru')
+            ->set('nik_ibu', '3201777788889999')
+            ->set('nama_anak', 'Anak Kedua Ibu Nur')
+            ->set('tanggal_lahir_anak', now()->subMonths(18)->format('Y-m-d'))
+            ->set('jenis_kelamin_anak', 'P')
+            ->call('simpanWargaBaru')
+            ->assertHasNoErrors()
+            ->assertSet('isFormBaru', false)
+            ->assertSet('jenis_vitamin', 'kapsul_merah');
+
+        $this->assertDatabaseHas('anak', [
+            'ibu_id' => $ibu->id,
+            'nama' => 'Anak Kedua Ibu Nur',
+        ]);
+    }
 }
