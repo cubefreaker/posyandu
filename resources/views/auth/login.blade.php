@@ -36,6 +36,25 @@
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
+                    {{-- [START] Toggle Role Admin/Kader (Bisa dihapus jika tidak diperlukan) --}}
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Masuk Sebagai</label>
+                        <input type="hidden" name="role" id="role-input" value="{{ old('role', 'admin') }}">
+                        <div class="grid grid-cols-2 p-1 bg-slate-100/90 rounded-xl border border-slate-200/80 gap-1">
+                            <button type="button" id="btn-role-admin" onclick="switchRole('admin')"
+                                    class="flex items-center justify-center gap-2 py-2 px-3 text-sm rounded-lg transition-all duration-150">
+                                <span>🛡️</span>
+                                <span>Admin</span>
+                            </button>
+                            <button type="button" id="btn-role-kader" onclick="switchRole('kader')"
+                                    class="flex items-center justify-center gap-2 py-2 px-3 text-sm rounded-lg transition-all duration-150">
+                                <span>👩‍⚕️</span>
+                                <span>Kader</span>
+                            </button>
+                        </div>
+                    </div>
+                    {{-- [END] Toggle Role Admin/Kader --}}
+
                     {{-- Username --}}
                     <div class="mb-4">
                         <label for="username" class="block text-sm font-medium text-slate-700 mb-1.5">Username</label>
@@ -70,5 +89,40 @@
             <p class="text-center text-xs text-slate-400 mt-6">&copy; {{ date('Y') }} {{ config('app.name') }}</p>
         </div>
     </div>
+
+    {{-- [START] Script Toggle Role (Bisa dihapus jika toggle dihapus) --}}
+    <script>
+        function switchRole(role) {
+            const roleInput = document.getElementById('role-input');
+            const btnAdmin = document.getElementById('btn-role-admin');
+            const btnKader = document.getElementById('btn-role-kader');
+
+            if (!roleInput || !btnAdmin || !btnKader) return;
+            roleInput.value = role;
+
+            const activeClasses = ['bg-white', 'text-primary-600', 'font-semibold', 'shadow-xs', 'border', 'border-slate-200/80'];
+            const inactiveClasses = ['text-slate-500', 'hover:text-slate-700', 'font-medium', 'border-transparent'];
+
+            if (role === 'admin') {
+                btnAdmin.classList.remove(...inactiveClasses);
+                btnAdmin.classList.add(...activeClasses);
+
+                btnKader.classList.remove(...activeClasses);
+                btnKader.classList.add(...inactiveClasses);
+            } else {
+                btnKader.classList.remove(...inactiveClasses);
+                btnKader.classList.add(...activeClasses);
+
+                btnAdmin.classList.remove(...activeClasses);
+                btnAdmin.classList.add(...inactiveClasses);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentRole = document.getElementById('role-input')?.value || 'admin';
+            switchRole(currentRole);
+        });
+    </script>
+    {{-- [END] Script Toggle Role --}}
 </body>
 </html>

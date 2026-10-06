@@ -65,15 +65,28 @@ new class extends Component
         $this->redirect(route('imunisasi.index'));
     }
 
+    public function selectAnak(int $id): void
+    {
+        $this->anak_id = (string) $id;
+        $this->searchAnak = '';
+    }
+
+    public function resetAnak(): void
+    {
+        $this->anak_id = '';
+        $this->searchAnak = '';
+    }
+
     public function with(): array
     {
         $daftarAnak = Anak::with('ibu')
             ->when($this->searchAnak, fn ($q) => $q->where('nama', 'like', "%{$this->searchAnak}%"))
             ->orderBy('nama')->limit(20)->get();
 
+        $selectedAnak = $this->anak_id ? Anak::with('ibu')->find($this->anak_id) : null;
         $jenisImunisasi = JenisImunisasi::orderBy('urutan')->get();
 
-        return compact('daftarAnak', 'jenisImunisasi');
+        return compact('daftarAnak', 'selectedAnak', 'jenisImunisasi');
     }
 
     public function title(): string
@@ -96,32 +109,62 @@ new class extends Component
                 <div x-data="{ open: false }" @click.outside="open = false" class="relative">
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Anak <span class="text-red-500">*</span></label>
                     
+                    {{-- Tampilan saat tertutup (selected value / placeholder) --}}
                     <div x-show="!open" @click="open = true; $nextTick(() => $refs.searchInput.focus())" 
-                         class="w-full h-11 px-3.5 border-[1.5px] border-slate-300 rounded-[10px] text-sm flex items-center bg-white cursor-text transition-all hover:border-slate-400">
-                        @if($anak_id)
-                            @php $selectedAnak = $daftarAnak->firstWhere('id', $anak_id) ?? \App\Models\Anak::find($anak_id); @endphp
-                            @if($selectedAnak)
-                                <span class="text-slate-800 font-medium">{{ $selectedAnak->nama }}</span>
-                                <span class="text-slate-400 ml-2 text-xs">· {{ $selectedAnak->usia ?? '' }}</span>
-                            @else
-                                <span class="text-slate-400">Pilih Anak...</span>
-                            @endif
+                         class="w-full h-11 px-3.5 border-[1.5px] {{ $errors->has('anak_id') ? 'border-red-400' : 'border-slate-300 hover:border-slate-400' }} rounded-[10px] text-sm flex items-center justify-between bg-white cursor-pointer transition-all">
+                        @if($selectedAnak)
+                            <div class="flex items-center gap-2 overflow-hidden min-w-0">
+                                <span class="text-slate-800 font-medium truncate">{{ $selectedAnak->nama }}</span>
+                                <span class="text-slate-400 text-xs shrink-0">· {{ $selectedAnak->usia ?? '' }}</span>
+                                @if($selectedAnak->ibu)
+                                    <span class="text-slate-400 text-xs truncate">· Ibu: {{ $selectedAnak->ibu->nama }}</span>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                                <button type="button" wire:click.stop="resetAnak" class="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-md transition-colors" title="Hapus pilihan">
+                                    <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                                <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </div>
                         @else
                             <span class="text-slate-400">Cari nama anak...</span>
+                            <svg class="w-4 h-4 text-slate-400 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                         @endif
                     </div>
 
+                    {{-- Tampilan saat terbuka (input search + list dropdown) --}}
                     <div x-show="open" style="display: none;" class="relative">
-                        <input x-ref="searchInput" wire:model.live.debounce.300ms="searchAnak" type="text"
-                               class="w-full h-11 px-3.5 border-[1.5px] border-primary-500 rounded-[10px] text-sm placeholder:text-slate-400 focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all"
-                               placeholder="Cari nama anak...">
-                        <div class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto">
+                        <div class="relative">
+                            <input x-ref="searchInput" 
+                                   wire:model.live.debounce.300ms="searchAnak" 
+                                   type="text"
+                                   @keydown.enter.prevent
+                                   @keydown.escape="open = false"
+                                   class="w-full h-11 pl-9 pr-9 border-[1.5px] border-primary-500 rounded-[10px] text-sm placeholder:text-slate-400 focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all"
+                                   placeholder="Ketik untuk mencari nama anak...">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </div>
+                            <button type="button" @click="open = false" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                        <div class="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-52 overflow-y-auto divide-y divide-slate-100">
                             @forelse($daftarAnak as $anak)
-                                <label @click="open = false" class="flex items-center gap-3 px-3 py-2.5 hover:bg-primary-50 cursor-pointer transition-colors {{ $anak_id == $anak->id ? 'bg-primary-50' : '' }}">
-                                    <input type="radio" wire:model="anak_id" value="{{ $anak->id }}" class="hidden">
-                                    <span class="text-sm font-medium text-slate-800">{{ $anak->nama }}</span>
-                                    <span class="text-xs text-slate-400">· {{ $anak->usia }}</span>
-                                </label>
+                                <button type="button" 
+                                        wire:key="anak-option-{{ $anak->id }}"
+                                        wire:click="selectAnak({{ $anak->id }})" 
+                                        @click="open = false" 
+                                        class="w-full flex items-center justify-between px-3.5 py-2.5 hover:bg-primary-50 text-left transition-colors {{ $anak_id == $anak->id ? 'bg-primary-50/80 text-primary-700' : 'text-slate-700' }}">
+                                    <div>
+                                        <span class="text-sm font-medium text-slate-800">{{ $anak->nama }}</span>
+                                        <span class="text-xs text-slate-400 ml-2">· {{ $anak->usia }}</span>
+                                        <span class="block text-xs text-slate-400">Ibu: {{ $anak->ibu->nama ?? '-' }}</span>
+                                    </div>
+                                    @if($anak_id == $anak->id)
+                                        <svg class="w-4 h-4 text-primary-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    @endif
+                                </button>
                             @empty
                                 <p class="px-3 py-4 text-sm text-slate-400 text-center">Tidak ditemukan</p>
                             @endforelse

@@ -14,6 +14,7 @@ class Ibu extends Model
         'nama',
         'tanggal_lahir',
         'alamat',
+        'telepon',
     ];
 
     protected function casts(): array
@@ -26,5 +27,15 @@ class Ibu extends Model
     public function anak(): HasMany
     {
         return $this->hasMany(Anak::class);
+    }
+
+    public function kehamilan(): HasMany
+    {
+        return $this->hasMany(Kehamilan::class);
+    }
+
+    public function kehamilanAktif()
+    {
+        return $this->hasOne(Kehamilan::class)->where('status_kehamilan', 'aktif')->latestOfMany();
     }
 }

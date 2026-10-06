@@ -2,6 +2,7 @@
 
 use App\Models\Anak;
 use App\Models\Ibu;
+use App\Models\Kehamilan;
 use App\Models\Imunisasi;
 use App\Models\Penimbangan;
 use Carbon\Carbon;
@@ -11,6 +12,7 @@ use Livewire\Attributes\Title;
 new #[Title('Dashboard')] class extends Component
 {
     public int $totalIbu = 0;
+    public int $totalIbuHamil = 0;
     public int $totalAnak = 0;
     public int $penimbanganBulanIni = 0;
     public int $imunisasiBulanIni = 0;
@@ -20,6 +22,7 @@ new #[Title('Dashboard')] class extends Component
         $bulanIni = Carbon::now();
 
         $this->totalIbu = Ibu::count();
+        $this->totalIbuHamil = Kehamilan::where('status_kehamilan', 'aktif')->count();
         $this->totalAnak = Anak::count();
         $this->penimbanganBulanIni = Penimbangan::whereMonth('tanggal_pelayanan', $bulanIni->month)
             ->whereYear('tanggal_pelayanan', $bulanIni->year)
@@ -65,19 +68,29 @@ new #[Title('Dashboard')] class extends Component
 ?>
 <div>
     {{-- Summary Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         {{-- Total Ibu --}}
-        <a href="{{ route('data-ibu.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-primary-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">
+        <a href="{{ route('data-ibu.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-primary-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 Total Ibu
             </div>
             <p class="text-3xl font-bold text-primary-600">{{ $totalIbu }}</p>
         </a>
 
+        {{-- Ibu Hamil Aktif --}}
+        <a href="{{ route('kesehatan-ibu.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-pink-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+                <svg class="w-4 h-4 text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                Ibu Hamil
+            </div>
+            <p class="text-3xl font-bold text-pink-600">{{ $totalIbuHamil }}</p>
+            <p class="text-[11px] text-slate-400 mt-1">kehamilan aktif</p>
+        </a>
+
         {{-- Total Anak --}}
-        <a href="{{ route('data-anak.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-secondary-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">
+        <a href="{{ route('data-anak.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-secondary-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19.5 10c.3 0 .5.1.7.3.2.2.3.4.3.7 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-.3.1-.5.3-.7.2-.2.4-.3.7-.3"/><path d="M12 2a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5z"/><path d="M17.5 10c-.4-2.3-2.4-5-5.5-5s-5.1 2.7-5.5 5"/></svg>
                 Total Anak
             </div>
@@ -85,23 +98,23 @@ new #[Title('Dashboard')] class extends Component
         </a>
 
         {{-- Penimbangan Bulan Ini --}}
-        <a href="{{ route('penimbangan.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-emerald-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">
+        <a href="{{ route('penimbangan.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-emerald-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
                 Penimbangan
             </div>
             <p class="text-3xl font-bold text-emerald-600">{{ $penimbanganBulanIni }}</p>
-            <p class="text-xs text-slate-400 mt-1">anak ditimbang bulan ini</p>
+            <p class="text-[11px] text-slate-400 mt-1">anak bulan ini</p>
         </a>
 
         {{-- Imunisasi Bulan Ini --}}
-        <a href="{{ route('imunisasi.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-blue-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-3">
+        <a href="{{ route('imunisasi.index') }}" wire:navigate class="block bg-white rounded-2xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-blue-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>
                 Imunisasi
             </div>
             <p class="text-3xl font-bold text-blue-600">{{ $imunisasiBulanIni }}</p>
-            <p class="text-xs text-slate-400 mt-1">pemberian bulan ini</p>
+            <p class="text-[11px] text-slate-400 mt-1">pemberian bulan ini</p>
         </a>
     </div>
 

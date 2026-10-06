@@ -20,6 +20,50 @@ erDiagram
         string nama
         date tanggal_lahir
         text alamat
+        string telepon "nullable"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    kehamilan {
+        int id PK
+        int ibu_id FK
+        int kehamilan_ke "Gravida (G)"
+        date hpht "Hari Pertama Haid Terakhir"
+        date hpl "Hari Perkiraan Lahir"
+        decimal bb_sebelum_hamil "kg"
+        decimal tinggi_badan "cm"
+        decimal imt_pra_hamil "kg/m2"
+        enum kategori_imt "kurus | normal | lebih | obesitas"
+        decimal lila_awal "cm, nullable"
+        boolean status_kek "LiLA < 23.5"
+        enum status_kehamilan "aktif | melahirkan | keguguran"
+        text catatan_risiko "nullable"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    pemeriksaan_kehamilan {
+        int id PK
+        int kehamilan_id FK
+        date tanggal_periksa
+        int usia_kehamilan_minggu
+        int trimester "1 | 2 | 3"
+        decimal berat_badan "kg"
+        decimal kenaikan_bb "kg"
+        int tekanan_darah_sistol "mmHg, nullable"
+        int tekanan_darah_diastol "mmHg, nullable"
+        decimal lila "cm, nullable"
+        decimal tinggi_fundus "TFU cm, nullable"
+        int djj "dpm, nullable"
+        string letak_janin "nullable"
+        string status_tt "nullable"
+        int tablet_fe "nullable"
+        decimal hb "g/dL, nullable"
+        enum protein_urin "negatif | positif_1 | positif_2 | positif_3, nullable"
+        int gula_darah "mg/dL, nullable"
+        text keluhan "nullable"
+        text tindakan_nasihat "nullable"
         timestamp created_at
         timestamp updated_at
     }
@@ -79,6 +123,8 @@ erDiagram
         timestamp updated_at
     }
 
+    ibu ||--o{ kehamilan : "memiliki riwayat"
+    kehamilan ||--o{ pemeriksaan_kehamilan : "memiliki periksa ANC"
     ibu ||--o{ anak : "memiliki"
     anak ||--o{ penimbangan : "memiliki"
     anak ||--o{ imunisasi : "memiliki"

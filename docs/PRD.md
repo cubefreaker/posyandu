@@ -6,58 +6,100 @@
 | ---- | ------ |
 | **Nama Proyek** | Sistem Informasi Posyandu Neiska |
 | **Tujuan** | Digitalisasi pencatatan dan pelaporan kegiatan posyandu untuk menggantikan proses manual (buku register) |
-| **Cakupan Pelayanan** | Anak (balita) |
+| **Cakupan Pelayanan** | Balita (Tumbuh Kembang, Imunisasi, Vitamin A) dan Ibu Hamil (Antenatal Care / Buku KIA) |
 | **Skala** | Satu posyandu |
-| **Pengguna** | Kader dan Admin posyandu |
+| **Pengguna** | Kader Posyandu (Petugas Lapangan) dan Admin Posyandu (Koordinator / Pengelola) |
 
 ---
 
-## 2. Hak Akses & Autentikasi
+## 2. Hak Akses & Autentikasi (RBAC)
 
 ### 2.1 Role Pengguna
 
-Sistem memiliki dua role: **Admin** dan **Kader**. Keduanya memiliki **hak akses yang sama** (full access) terhadap seluruh fitur, termasuk tambah, edit, dan hapus data.
+Sistem membedakan secara tegas hak akses antara dua role:
 
-### 2.2 Alur Login
+1. **Kader Posyandu (Operator Lapangan):**
+   - Bertugas melakukan input operasional harian posyandu secara cepat.
+   - Menggunakan **Form Pelayanan Terpadu** (pendaftaran cepat, penimbangan balita, imunisasi, vitamin, dan rekap harian dalam 1 halaman).
+   - Memperbarui data kontak/domisili warga binaan dan mencatat pemeriksaan ANC ibu hamil.
+   - **Dibatasi haknya**: Tidak dapat menghapus data master (mencegah kehilangan data historis), tidak dapat mengakses manajemen akun pengguna, dan tidak dapat mengubah konfigurasi sistem.
+   - Saat login, diarahkan langsung ke halaman **Pelayanan Terpadu**.
 
-1. Pengguna membuka halaman login
+2. **Admin Posyandu (Koordinator / Bidan Desa):**
+   - Bertugas melakukan pengawasan, audit data, analisis indikator kesehatan posyandu, dan tata kelola akun.
+   - Memiliki akses penuh (Full Control): Dashboard Analitik Eksekutif, Master Data (Ibu, Anak, Penimbangan, Imunisasi, Vitamin, Kesehatan Ibu Hamil), hak hapus data, Laporan Rekapitulasi Puskesmas, dan **User Management**.
+   - Saat login, diarahkan langsung ke **Dashboard Analitik**.
+
+### 2.2 Alur Login & Redirection
+
+1. Pengguna membuka halaman login (`/login`)
 2. Memasukkan **username** dan **password**
-3. Sistem memvalidasi kredensial dan menentukan role berdasarkan data akun
-4. Jika valid, pengguna diarahkan ke **Dashboard**
-5. Jika gagal, tampilkan pesan error
+3. Sistem memvalidasi kredensial dan memeriksa role pengguna:
+   - Jika role **Kader** $\rightarrow$ diarahkan langsung ke **Pelayanan Terpadu** (`/pelayanan`)
+   - Jika role **Admin** $\rightarrow$ diarahkan langsung ke **Dashboard Analitik** (`/dashboard`)
+4. Jika login gagal, tampilkan pesan error yang sesuai
 
 ### 2.3 Keamanan
 
-- Session otomatis berakhir setelah periode tidak aktif (session timeout)
-- Halaman selain login hanya bisa diakses oleh pengguna yang sudah terautentikasi
-- Password disimpan dalam bentuk terenkripsi
+- Session timeout otomatis setelah periode tidak aktif
+- Halaman selain login dilindungi middleware `auth` dan hak akses spesifik admin dilindungi middleware `IsAdmin`
+- Tombol aksi berbahaya (penghapusan data) diproteksi di tingkat antarmuka dan backend controller/Livewire
 
 ---
 
 ## 3. Relasi Data
 
-Data Anak **berelasi** dengan Data Ibu menggunakan **NIK Ibu** sebagai penghubung:
-
-- Satu ibu bisa memiliki banyak anak
-- Setiap anak wajib terhubung ke satu data ibu
-- Data ibu tidak bisa dihapus jika masih memiliki anak yang terdaftar
-- Data anak tidak bisa dihapus jika masih memiliki riwayat penimbangan, imunisasi, atau vitamin
+- **Ibu $\leftrightarrow$ Anak**: Satu ibu bisa memiliki banyak anak. Data ibu tidak bisa dihapus jika masih memiliki data anak.
+- **Ibu $\leftrightarrow$ Kehamilan**: Satu ibu bisa memiliki riwayat kehamilan (G1, G2, dst).
+- **Kehamilan $\leftrightarrow$ Pemeriksaan ANC**: Satu kehamilan memiliki banyak catatan kunjungan periksa berkala standar 10T Buku KIA.
+- **Anak $\leftrightarrow$ Penimbangan, Imunisasi, Vitamin**: Setiap anak memiliki riwayat penimbangan (z-score), imunisasi, dan pemberian vitamin A.
 
 ---
 
 ## 4. Halaman & Fitur
 
-### 4.1 Dashboard
+### 4.1 Dashboard (Admin)
 
 | Komponen | Detail |
 | -------- | ------ |
-| Kartu ringkasan | Total ibu terdaftar, total anak aktif, jumlah penimbangan bulan ini, jumlah imunisasi bulan ini |
+| Kartu ringkasan | Total ibu terdaftar, total ibu hamil aktif, total anak, jumlah penimbangan bulan ini, jumlah imunisasi bulan ini |
 | Statistik & indikator | Distribusi status gizi anak (chart), daftar anak yang belum ditimbang bulan ini |
-| Navigasi | Sidebar menu untuk akses ke semua modul |
+| Navigasi | Sidebar menu terstruktur untuk akses ke semua modul manajerial |
 
 ---
 
-### 4.2 Halaman Data Ibu
+### 4.2 Halaman Pelayanan Terpadu (One-Stop Posyandu Service)
+
+Halaman kerja utama kader yang mengintegrasikan seluruh alur operasional Posyandu dalam satu form ringkas:
+
+| Bagian | Fitur & Field | Keterangan |
+| ------ | ------------- | ---------- |
+| **Identitas Warga** | Quick search balita terdaftar ATAU inline pendaftaran cepat Ibu + Anak baru | Memungkinkan pendaftaran warga baru tanpa meninggalkan halaman |
+| **Penimbangan Fisik** | Berat Badan (kg), Tinggi/PJ (cm), LK (cm), LiLA (cm) | Live preview status gizi Kemenkes (BB/U, TB/U, BB/TB, z-score) |
+| **Pelayanan Medis** | Checklist Imunisasi (dropdown vaksin) & Checklist Vitamin A (auto-detect biru/merah) | Otomatis merekomendasikan kapsul vitamin sesuai usia |
+| **Simpan Terpadu** | Tombol "Simpan Pelayanan Hari Ini" | Menyimpan transaksi secara atomic ke database |
+| **Rekapitulasi Harian** | Tabel riwayat pelayanan hari ini, statistik harian, dan tombol **Export/Cetak PDF Laporan Hari Ini** | Laporan langsung tersedia di halaman yang sama |
+
+---
+
+### 4.3 Halaman Kesehatan Ibu Hamil (Buku KIA)
+
+Modul pemantauan kesehatan ibu hamil mengadopsi standar **Buku KIA (Buku Pink Kemenkes RI)**:
+
+#### Profil Kehamilan
+- **Field**: HPHT, Taksiran Persalinan (HPL - Rumus Naegele), Usia Gestasi (Minggu), BB Pra-Hamil, Tinggi Badan, IMT Pra-Hamil & Kategori (Kurus, Normal, Lebih, Obesitas), Skrining LiLA Awal (deteksi risiko KEK $< 23.5\text{ cm}$), Status Kehamilan (aktif/melahirkan/keguguran), Catatan Risiko.
+
+#### Pemeriksaan Kunjungan ANC (Standar 10T)
+- **Field**: Tanggal Periksa, Usia Kehamilan saat periksa (minggu & trimester), Berat Badan saat ini, Kenaikan BB (dari pra-hamil), Tekanan Darah (Sistol/Diastol - alert jika $\ge 140/90$ mmHg untuk waspada preeklampsia), Tinggi Fundus Uteri (TFU dalam cm), Denyut Jantung Janin (DJJ dalam dpm), Letak Janin (Kepala/Sungsang/Lintang), Status Imunisasi TT, Tablet Tambah Darah (Fe), Hasil Lab (Hb, Protein Urin, GDS), Keluhan & Tindakan.
+
+#### Grafik Peningkatan Berat Badan Ibu Hamil (Buku KIA)
+- Visualisasi interaktif berbasis Chart.js.
+- Kurva acuan standar Kemenkes/IOM (rentang target kenaikan berat badan ideal dari minggu 0 s/d 40 berdasarkan IMT pra-hamil).
+- Plot titik kenaikan berat badan riwayat ANC ibu untuk deteksi dini risiko kehamilan (kurang gizi/BBLR vs risiko preeklampsia/makrosomia).
+
+---
+
+### 4.4 Halaman Data Ibu
 
 #### Field Data
 

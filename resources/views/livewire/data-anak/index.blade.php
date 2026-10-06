@@ -14,6 +14,11 @@ new #[Title('Data Anak')] class extends Component
 
     public function delete(int $id): void
     {
+        if (auth()->user()->role !== 'admin') {
+            session()->flash('error', 'Akses ditolak. Hanya admin yang dapat menghapus data.');
+            return;
+        }
+
         $anak = Anak::findOrFail($id);
         if ($anak->penimbangan()->count() > 0 || $anak->imunisasi()->count() > 0 || $anak->vitamin()->count() > 0) {
             session()->flash('error', 'Data anak tidak bisa dihapus karena masih memiliki riwayat.');
@@ -83,9 +88,11 @@ new #[Title('Data Anak')] class extends Component
                                     <a href="{{ route('data-anak.edit', $anak->id) }}" class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
                                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                     </a>
+                                    @if(auth()->user()->role === 'admin')
                                     <button wire:click="delete({{ $anak->id }})" wire:confirm="Yakin ingin menghapus data anak '{{ $anak->nama }}'?" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

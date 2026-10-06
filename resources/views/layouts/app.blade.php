@@ -22,14 +22,29 @@
 
             {{-- Menu --}}
             <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-                <x-nav-link href="{{ route('dashboard') }}" icon="layout-dashboard" :active="request()->routeIs('dashboard')">Dashboard</x-nav-link>
-                <x-nav-link href="{{ route('data-ibu.index') }}" icon="users" :active="request()->routeIs('data-ibu.*')">Data Ibu</x-nav-link>
-                <x-nav-link href="{{ route('data-anak.index') }}" icon="baby" :active="request()->routeIs('data-anak.*')">Data Anak</x-nav-link>
-                <x-nav-link href="{{ route('penimbangan.index') }}" icon="scale" :active="request()->routeIs('penimbangan.*')">Penimbangan</x-nav-link>
-                <x-nav-link href="{{ route('imunisasi.index') }}" icon="syringe" :active="request()->routeIs('imunisasi.*')">Imunisasi</x-nav-link>
-                <x-nav-link href="{{ route('vitamin.index') }}" icon="pill" :active="request()->routeIs('vitamin.*')">Vitamin</x-nav-link>
-                <x-nav-link href="{{ route('laporan.index') }}" icon="file-text" :active="request()->routeIs('laporan.*')">Laporan</x-nav-link>
-                @if(auth()->user()->role === 'admin')
+                @if(auth()->user()->role === 'kader')
+                    <div class="px-3 pb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">Pelayanan Posyandu</div>
+                    <x-nav-link href="{{ route('pelayanan.index') }}" icon="zap" :active="request()->routeIs('pelayanan.*')">Pelayanan Terpadu</x-nav-link>
+                    <x-nav-link href="{{ route('kesehatan-ibu.index') }}" icon="heart-pulse" :active="request()->routeIs('kesehatan-ibu.*')">Kesehatan Ibu Hamil</x-nav-link>
+                    
+                    <div class="px-3 pt-3 pb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">Data & Laporan</div>
+                    <x-nav-link href="{{ route('data-ibu.index') }}" icon="users" :active="request()->routeIs('data-ibu.*') || request()->routeIs('data-anak.*')">Data Warga</x-nav-link>
+                    <x-nav-link href="{{ route('laporan.index') }}" icon="file-text" :active="request()->routeIs('laporan.*')">Laporan Posyandu</x-nav-link>
+                @else
+                    <div class="px-3 pb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">Manajerial</div>
+                    <x-nav-link href="{{ route('dashboard') }}" icon="layout-dashboard" :active="request()->routeIs('dashboard')">Dashboard</x-nav-link>
+                    <x-nav-link href="{{ route('pelayanan.index') }}" icon="zap" :active="request()->routeIs('pelayanan.*')">Pelayanan Terpadu</x-nav-link>
+                    
+                    <div class="px-3 pt-3 pb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">Master Data</div>
+                    <x-nav-link href="{{ route('data-ibu.index') }}" icon="users" :active="request()->routeIs('data-ibu.*')">Data Ibu</x-nav-link>
+                    <x-nav-link href="{{ route('data-anak.index') }}" icon="baby" :active="request()->routeIs('data-anak.*')">Data Anak</x-nav-link>
+                    <x-nav-link href="{{ route('kesehatan-ibu.index') }}" icon="heart-pulse" :active="request()->routeIs('kesehatan-ibu.*')">Kesehatan Ibu Hamil</x-nav-link>
+                    <x-nav-link href="{{ route('penimbangan.index') }}" icon="scale" :active="request()->routeIs('penimbangan.*')">Penimbangan</x-nav-link>
+                    <x-nav-link href="{{ route('imunisasi.index') }}" icon="syringe" :active="request()->routeIs('imunisasi.*')">Imunisasi</x-nav-link>
+                    <x-nav-link href="{{ route('vitamin.index') }}" icon="pill" :active="request()->routeIs('vitamin.*')">Vitamin</x-nav-link>
+                    
+                    <div class="px-3 pt-3 pb-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase">Laporan & Pengaturan</div>
+                    <x-nav-link href="{{ route('laporan.index') }}" icon="file-text" :active="request()->routeIs('laporan.*')">Laporan</x-nav-link>
                     <x-nav-link href="{{ route('user-management.index') }}" icon="users-cog" :active="request()->routeIs('user-management.*')">User Management</x-nav-link>
                 @endif
             </nav>

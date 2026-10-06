@@ -50,11 +50,27 @@ new class extends Component
         $this->redirect(route('data-anak.index'));
     }
 
+    public function selectIbu(int $id): void
+    {
+        $this->ibu_id = (string) $id;
+        $this->searchIbu = '';
+    }
+
+    public function resetIbu(): void
+    {
+        $this->ibu_id = '';
+        $this->searchIbu = '';
+    }
+
     public function with(): array
     {
         $daftarIbu = Ibu::when($this->searchIbu, fn ($q) => $q->where('nama', 'like', "%{$this->searchIbu}%")->orWhere('nik', 'like', "%{$this->searchIbu}%"))
             ->orderBy('nama')->limit(20)->get();
-        return ['daftarIbu' => $daftarIbu];
+        $selectedIbu = $this->ibu_id ? Ibu::find($this->ibu_id) : null;
+        return [
+            'daftarIbu' => $daftarIbu,
+            'selectedIbu' => $selectedIbu,
+        ];
     }
     
     public function title(): string
@@ -82,35 +98,57 @@ new class extends Component
                     
                     {{-- Selected Value Display --}}
                     <div x-show="!open" @click="open = true; $nextTick(() => $refs.searchInput.focus())" 
-                         class="w-full h-11 px-3.5 border-[1.5px] border-slate-300 rounded-[10px] text-sm flex items-center bg-white cursor-text transition-all hover:border-slate-400">
-                        @if($ibu_id)
-                            @php $selectedIbu = $daftarIbu->firstWhere('id', $ibu_id) ?? \App\Models\Ibu::find($ibu_id); @endphp
-                            @if($selectedIbu)
-                                <span class="text-slate-800 font-medium">{{ $selectedIbu->nama }}</span>
-                                <span class="text-slate-400 ml-2 font-mono text-xs">{{ $selectedIbu->nik }}</span>
-                            @else
-                                <span class="text-slate-400">Pilih Ibu...</span>
-                            @endif
+                         class="w-full h-11 px-3.5 border-[1.5px] {{ $errors->has('ibu_id') ? 'border-red-400' : 'border-slate-300 hover:border-slate-400' }} rounded-[10px] text-sm flex items-center justify-between bg-white cursor-pointer transition-all">
+                        @if($selectedIbu)
+                            <div class="flex items-center gap-2 overflow-hidden min-w-0">
+                                <span class="text-slate-800 font-medium truncate">{{ $selectedIbu->nama }}</span>
+                                <span class="text-slate-400 font-mono text-xs shrink-0">· NIK: {{ $selectedIbu->nik ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                                <button type="button" wire:click.stop="resetIbu" class="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-md transition-colors" title="Hapus pilihan">
+                                    <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                                <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </div>
                         @else
                             <span class="text-slate-400">Cari nama atau NIK ibu...</span>
+                            <svg class="w-4 h-4 text-slate-400 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                         @endif
                     </div>
 
                     {{-- Search Input and Dropdown --}}
                     <div x-show="open" style="display: none;" class="relative">
-                        <input x-ref="searchInput" wire:model.live.debounce.300ms="searchIbu" type="text"
-                               class="w-full h-11 px-3.5 border-[1.5px] border-primary-500 rounded-[10px] text-sm placeholder:text-slate-400 focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all"
-                               placeholder="Cari nama atau NIK ibu...">
+                        <div class="relative">
+                            <input x-ref="searchInput" 
+                                   wire:model.live.debounce.300ms="searchIbu" 
+                                   type="text"
+                                   @keydown.enter.prevent
+                                   @keydown.escape="open = false"
+                                   class="w-full h-11 pl-9 pr-9 border-[1.5px] border-primary-500 rounded-[10px] text-sm placeholder:text-slate-400 focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all"
+                                   placeholder="Ketik nama atau NIK ibu...">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </div>
+                            <button type="button" @click="open = false" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
 
-                        <div class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto">
+                        <div class="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-52 overflow-y-auto divide-y divide-slate-100">
                             @forelse($daftarIbu as $ibu)
-                                <label @click="open = false" class="flex items-center gap-3 px-3 py-2.5 hover:bg-primary-50 cursor-pointer transition-colors {{ $ibu_id == $ibu->id ? 'bg-primary-50' : '' }}">
-                                    <input type="radio" wire:model="ibu_id" value="{{ $ibu->id }}" class="hidden">
+                                <button type="button" 
+                                        wire:key="ibu-option-{{ $ibu->id }}"
+                                        wire:click="selectIbu({{ $ibu->id }})" 
+                                        @click="open = false" 
+                                        class="w-full flex items-center justify-between px-3.5 py-2.5 hover:bg-primary-50 text-left transition-colors {{ $ibu_id == $ibu->id ? 'bg-primary-50/80 text-primary-700' : 'text-slate-700' }}">
                                     <div>
                                         <span class="text-sm font-medium text-slate-800">{{ $ibu->nama }}</span>
-                                        <span class="text-xs text-slate-400 ml-2 font-mono">{{ $ibu->nik }}</span>
+                                        <span class="text-xs text-slate-400 ml-2 font-mono">NIK: {{ $ibu->nik ?? '-' }}</span>
                                     </div>
-                                </label>
+                                    @if($ibu_id == $ibu->id)
+                                        <svg class="w-4 h-4 text-primary-600 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    @endif
+                                </button>
                             @empty
                                 <p class="px-3 py-4 text-sm text-slate-400 text-center">Tidak ada data ibu ditemukan</p>
                             @endforelse

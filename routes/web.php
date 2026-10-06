@@ -9,17 +9,30 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Redirect root to dashboard
-Route::get('/', fn () => redirect()->route('dashboard'));
+// Redirect root to dashboard / pelayanan
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route(auth()->user()->role === 'kader' ? 'pelayanan.index' : 'dashboard');
+    }
+    return redirect()->route('login');
+});
 
 // Protected routes
 Route::middleware('auth')->group(function () {
     Route::livewire('/dashboard', 'dashboard')->name('dashboard');
+    Route::livewire('/pelayanan', 'pelayanan.index')->name('pelayanan.index');
 
     // Data Ibu
     Route::livewire('/data-ibu', 'data-ibu.index')->name('data-ibu.index');
     Route::livewire('/data-ibu/tambah', 'data-ibu.form')->name('data-ibu.create');
     Route::livewire('/data-ibu/{id}/edit', 'data-ibu.form')->name('data-ibu.edit');
+
+    // Kesehatan Ibu Hamil (Buku KIA)
+    Route::livewire('/kesehatan-ibu', 'kesehatan-ibu.index')->name('kesehatan-ibu.index');
+    Route::livewire('/kesehatan-ibu/tambah', 'kesehatan-ibu.form-kehamilan')->name('kesehatan-ibu.create');
+    Route::livewire('/kesehatan-ibu/{id}/edit', 'kesehatan-ibu.form-kehamilan')->name('kesehatan-ibu.edit');
+    Route::livewire('/kesehatan-ibu/{kehamilanId}/periksa', 'kesehatan-ibu.periksa')->name('kesehatan-ibu.periksa');
+    Route::livewire('/kesehatan-ibu/{kehamilanId}/grafik', 'kesehatan-ibu.grafik')->name('kesehatan-ibu.grafik');
 
     // Data Anak
     Route::livewire('/data-anak', 'data-anak.index')->name('data-anak.index');
@@ -53,3 +66,15 @@ Route::middleware('auth')->group(function () {
         Route::livewire('/user-management/{id}/edit', 'user-management.form')->name('user-management.edit');
     });
 });
+
+// route for php artisan optimize clear 
+Route::get('/optimize-clear', function () {
+    Artisan::call('optimize:clear');
+    return redirect()->back()->with('success', 'Optimize clear berhasil!');
+})->name('optimize-clear');
+
+// route for storage link
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return redirect()->back()->with('success', 'Storage link berhasil!');
+})->name('storage-link');
