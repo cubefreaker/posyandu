@@ -112,6 +112,15 @@
                 </div>
             @endif
 
+            @if (session('info'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                     x-transition
+                     class="fixed top-4 right-4 left-4 sm:left-auto sm:right-4 z-50 max-w-sm ml-auto flex items-center gap-3 bg-white border border-blue-200 text-blue-700 px-4 py-3 rounded-xl shadow-lg">
+                    <svg class="w-5 h-5 text-blue-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <span class="text-sm font-medium">{{ session('info') }}</span>
+                </div>
+            @endif
+
             {{-- Page Content --}}
             <main class="p-4 sm:p-6 min-w-0">
                 {{ $slot }}

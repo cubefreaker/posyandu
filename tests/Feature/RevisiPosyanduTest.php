@@ -246,4 +246,24 @@ class RevisiPosyanduTest extends TestCase
             'nama' => 'Anak Kedua Ibu Nur',
         ]);
     }
+
+    public function test_kader_accessing_dashboard_redirects_to_pelayanan()
+    {
+        $this->actingAs($this->kader);
+
+        $response = $this->get('/dashboard');
+
+        $response->assertRedirect(route('pelayanan.index'));
+        $response->assertSessionHas('info');
+    }
+
+    public function test_admin_accessing_dashboard_succeeds()
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertSee('Dashboard');
+    }
 }

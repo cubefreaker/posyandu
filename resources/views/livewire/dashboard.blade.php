@@ -19,6 +19,12 @@ new #[Title('Dashboard')] class extends Component
 
     public function mount(): void
     {
+        if (auth()->check() && auth()->user()->role === 'kader') {
+            // session()->flash('info', 'Halaman Dashboard khusus untuk Admin. Anda dialihkan ke Pelayanan Terpadu.');
+            $this->redirectRoute('pelayanan.index');
+            return;
+        }
+
         $bulanIni = Carbon::now();
 
         $this->totalIbu = Ibu::count();
@@ -147,8 +153,6 @@ new #[Title('Dashboard')] class extends Component
                                 Timbang
                             </a>
                         </div>
-                    @endforeach
-                </div>
                     @endforeach
                 </div>
             @else
