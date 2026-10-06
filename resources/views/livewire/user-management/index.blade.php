@@ -45,7 +45,7 @@ new #[Title('Manajemen User')] class extends Component
             <h2 class="font-heading font-bold text-xl text-slate-900">Manajemen User</h2>
             <p class="text-sm text-slate-500">Kelola data user dan kader aplikasi posyandu</p>
         </div>
-        <a href="{{ route('user-management.create') }}" class="inline-flex items-center gap-2 h-10 px-5 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97]">
+        <a href="{{ route('user-management.create') }}" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] w-full sm:w-auto">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Tambah User
         </a>
@@ -60,7 +60,7 @@ new #[Title('Manajemen User')] class extends Component
     {{-- Table --}}
     <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full min-w-[500px]">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Nama</th>

@@ -453,15 +453,15 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
         </div>
 
         {{-- Tanggal Pelayanan Picker & Cetak Laporan --}}
-        <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2 bg-white px-3 py-2 border border-slate-200 rounded-xl shadow-xs">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <div class="flex items-center justify-between sm:justify-start gap-2 bg-white px-3 py-2 border border-slate-200 rounded-xl shadow-xs">
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal:</span>
                 <input type="date" wire:model.live="tanggal_pelayanan" class="text-sm font-semibold text-slate-800 bg-transparent outline-none">
             </div>
 
             <a href="{{ route('laporan.export-pdf', ['start_date' => $tanggal_pelayanan, 'end_date' => $tanggal_pelayanan, 'tipe' => 'harian']) }}"
                target="_blank"
-               class="inline-flex items-center gap-2 h-10 px-4 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition-all shadow-xs">
+               class="inline-flex items-center justify-center gap-2 h-10 px-4 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition-all shadow-xs">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Cetak Laporan Hari Ini
             </a>
@@ -470,12 +470,12 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
 
     {{-- Mode Edit Banner --}}
     @if($editingPenimbanganId)
-        <div class="mb-6 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl flex items-center justify-between">
+        <div class="mb-6 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-sm font-medium">
-                <svg class="w-5 h-5 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg class="w-5 h-5 text-amber-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <span>Anda sedang mengedit data pelayanan balita terpilih. Koreksi angka lalu klik "Perbarui Pelayanan".</span>
             </div>
-            <button wire:click="batalEdit" class="text-xs font-semibold bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors">
+            <button wire:click="batalEdit" class="text-xs font-semibold bg-white border border-amber-300 text-amber-700 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors shrink-0 self-start sm:self-auto">
                 Batal Edit
             </button>
         </div>
@@ -619,7 +619,7 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
                             </div>
 
                             {{-- Row 1: NIK Ibu & Nama Ibu --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">
                                         NIK Ibu <span class="text-red-500">*</span>
@@ -651,7 +651,7 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
                             </div>
 
                             {{-- Row 2: Tanggal Lahir Ibu & No. Telepon / WA --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">
                                         Tanggal Lahir Ibu <span class="text-red-500">*</span>
@@ -706,7 +706,7 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
                             </div>
 
                             {{-- Row 2: Tanggal Lahir Balita & Jenis Kelamin --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">
                                         Tanggal Lahir Balita <span class="text-red-500">*</span>
@@ -801,7 +801,7 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Hasil Hitung Gizi Kemenkes (Real-Time):</span>
                             <span class="text-xs text-slate-400 font-mono">Z-Score: {{ $previewGizi['zscore_bbu'] }} SD</span>
                         </div>
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <div class="p-2.5 rounded-lg bg-white border border-slate-100 text-center">
                                 <span class="block text-[10px] text-slate-400 font-medium">BB/U (Berat/Usia)</span>
                                 <span class="text-xs font-bold capitalize 
@@ -891,13 +891,13 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
                 </div>
 
                 {{-- Action Button Simpan Pelayanan Lengkap --}}
-                <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <button type="button" wire:click="resetPelayananForm" class="text-xs text-slate-500 hover:text-slate-700">
+                <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <button type="button" wire:click="resetPelayananForm" class="text-xs text-slate-500 hover:text-slate-700 text-center sm:text-left py-2">
                         Reset Isian
                     </button>
                     
                     <button type="button" wire:click="simpanPelayanan" 
-                            class="inline-flex items-center gap-2 h-11 px-6 bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm rounded-xl transition-all shadow-md active:scale-[0.98]">
+                            class="inline-flex items-center justify-center gap-2 h-11 px-6 bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm rounded-xl transition-all shadow-md active:scale-[0.98]">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         {{ $editingPenimbanganId ? 'Perbarui Data Pelayanan' : 'Simpan Pelayanan Hari Ini' }}
                     </button>
@@ -1030,7 +1030,7 @@ new #[Title('Pelayanan Posyandu Terpadu')] class extends Component
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="w-full min-w-[680px] text-left">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Nama Balita</th>

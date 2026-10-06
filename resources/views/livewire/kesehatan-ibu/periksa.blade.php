@@ -169,7 +169,7 @@ new class extends Component
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <form wire:submit="save" class="space-y-6">
 
                 {{-- WAKTU & USIA GESTASI --}}
@@ -320,12 +320,12 @@ new class extends Component
                 </div>
 
                 {{-- Buttons --}}
-                <div class="flex items-center gap-3 pt-3 border-t border-slate-100">
-                    <button type="submit" class="inline-flex items-center gap-2 h-11 px-6 bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm rounded-xl transition-all shadow-md active:scale-[0.98]">
+                <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 pt-3 border-t border-slate-100">
+                    <button type="submit" class="inline-flex items-center justify-center gap-2 h-11 px-6 bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm rounded-xl transition-all shadow-md active:scale-[0.98] w-full sm:w-auto">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         Simpan Hasil Pemeriksaan ANC
                     </button>
-                    <a href="{{ route('kesehatan-ibu.index') }}" class="inline-flex items-center h-11 px-5 border border-slate-300 text-slate-600 font-semibold text-sm rounded-xl hover:bg-slate-50 transition-all">
+                    <a href="{{ route('kesehatan-ibu.index') }}" class="inline-flex items-center justify-center h-11 px-5 border border-slate-300 text-slate-600 font-semibold text-sm rounded-xl hover:bg-slate-50 transition-all w-full sm:w-auto">
                         Batal
                     </a>
                 </div>

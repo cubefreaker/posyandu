@@ -75,12 +75,12 @@ new class extends Component
     </div>
 
     <div class="max-w-2xl bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100">
+        <div class="px-4 sm:px-6 py-4 border-b border-slate-100">
             <h2 class="font-heading font-bold text-lg text-slate-900">{{ $user ? 'Edit User' : 'Tambah User' }}</h2>
             <p class="text-sm text-slate-500">{{ $user ? 'Ubah data user' : 'Tambahkan user baru sebagai admin atau kader' }}</p>
         </div>
 
-        <form wire:submit="save" class="p-6 space-y-5">
+        <form wire:submit="save" class="p-4 sm:p-6 space-y-5">
             <div>
                 <label for="nama" class="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</label>
                 <input wire:model="nama" type="text" id="nama" class="w-full h-11 px-4 border-[1.5px] border-slate-300 rounded-[10px] text-sm focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all @error('nama') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror">
@@ -108,11 +108,11 @@ new class extends Component
                 @error('role') <p class="mt-1.5 text-xs text-red-500 font-medium">{{ $message }}</p> @enderror
             </div>
 
-            <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
-                <a href="{{ route('user-management.index') }}" wire:navigate class="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-[10px] transition-colors">
+            <div class="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 border-t border-slate-100">
+                <a href="{{ route('user-management.index') }}" wire:navigate class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-[10px] transition-colors w-full sm:w-auto">
                     Batal
                 </a>
-                <button type="submit" class="inline-flex items-center justify-center h-10 px-6 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97]">
+                <button type="submit" class="inline-flex items-center justify-center h-10 px-6 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] w-full sm:w-auto">
                     <span wire:loading.remove wire:target="save">Simpan</span>
                     <span wire:loading wire:target="save">Menyimpan...</span>
                 </button>

@@ -41,17 +41,17 @@ new #[Title('Imunisasi')] class extends Component
 <div>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div><h2 class="font-heading font-bold text-xl text-slate-900">Imunisasi</h2><p class="text-sm text-slate-500">Pencatatan riwayat imunisasi anak</p></div>
-        <a href="{{ route('imunisasi.create') }}" class="inline-flex items-center gap-2 h-10 px-5 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97]">
+        <a href="{{ route('imunisasi.create') }}" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] w-full sm:w-auto">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah
         </a>
     </div>
     <div class="mb-4">
         <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama anak atau jenis imunisasi..."
-               class="h-11 px-4 border-[1.5px] border-slate-300 rounded-[10px] text-sm placeholder:text-slate-400 focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all sm:w-72">
+               class="w-full sm:w-72 h-11 px-4 border-[1.5px] border-slate-300 rounded-[10px] text-sm placeholder:text-slate-400 focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none transition-all">
     </div>
     <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full min-w-[640px]">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal</th>

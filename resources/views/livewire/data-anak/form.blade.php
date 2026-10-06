@@ -177,12 +177,12 @@ new class extends Component
                 {{-- Jenis Kelamin --}}
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 px-4 py-2.5 border-[1.5px] rounded-[10px] cursor-pointer transition-all {{ $jenis_kelamin === 'L' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-slate-300 hover:bg-slate-50' }}">
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center justify-center sm:justify-start gap-2 px-4 py-2.5 border-[1.5px] rounded-[10px] cursor-pointer transition-all {{ $jenis_kelamin === 'L' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-slate-300 hover:bg-slate-50' }}">
                             <input type="radio" wire:model="jenis_kelamin" value="L" class="text-primary-500 focus:ring-primary-500/20">
                             <span class="text-sm font-medium">Laki-laki</span>
                         </label>
-                        <label class="flex items-center gap-2 px-4 py-2.5 border-[1.5px] rounded-[10px] cursor-pointer transition-all {{ $jenis_kelamin === 'P' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-slate-300 hover:bg-slate-50' }}">
+                        <label class="flex items-center justify-center sm:justify-start gap-2 px-4 py-2.5 border-[1.5px] rounded-[10px] cursor-pointer transition-all {{ $jenis_kelamin === 'P' ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-slate-300 hover:bg-slate-50' }}">
                             <input type="radio" wire:model="jenis_kelamin" value="P" class="text-primary-500 focus:ring-primary-500/20">
                             <span class="text-sm font-medium">Perempuan</span>
                         </label>
@@ -191,12 +191,12 @@ new class extends Component
                 </div>
 
                 {{-- Actions --}}
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="submit" class="inline-flex items-center gap-2 h-10 px-6 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97]">
+                <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                    <button type="submit" class="inline-flex items-center justify-center gap-2 h-10 px-6 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] w-full sm:w-auto">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         Simpan
                     </button>
-                    <a href="{{ route('data-anak.index') }}" class="inline-flex items-center h-10 px-6 border border-slate-300 text-slate-600 font-semibold text-sm rounded-[10px] hover:bg-slate-50 transition-all">
+                    <a href="{{ route('data-anak.index') }}" class="inline-flex items-center justify-center h-10 px-6 border border-slate-300 text-slate-600 font-semibold text-sm rounded-[10px] hover:bg-slate-50 transition-all w-full sm:w-auto">
                         Batal
                     </a>
                 </div>

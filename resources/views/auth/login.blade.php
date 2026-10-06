@@ -10,7 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-50 font-body text-slate-700 antialiased">
-    <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="min-h-screen flex items-center justify-center px-4 py-8">
         <div class="w-full max-w-md">
             {{-- Logo --}}
             <div class="text-center mb-8">
@@ -22,7 +22,7 @@
             </div>
 
             {{-- Login Card --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
                 <h2 class="font-heading font-semibold text-lg text-slate-800 mb-6">Masuk ke akun Anda</h2>
 
                 @if ($errors->any())

@@ -13,11 +13,16 @@
 <body class="bg-slate-50 font-body text-slate-700 antialiased">
     <div class="flex min-h-screen">
         {{-- Sidebar --}}
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-60 transform bg-white border-r border-slate-200 shadow-xs transition-transform duration-250 ease-in-out lg:translate-x-0 -translate-x-full">
-            {{-- Logo --}}
-            <div class="flex items-center gap-3 h-14 px-5 border-b border-slate-100">
-                <span class="text-xl">🏥</span>
-                <span class="font-heading font-bold text-primary-700 text-lg">{{ config('app.name') }}</span>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-60 flex flex-col bg-white border-r border-slate-200 shadow-xs transition-transform duration-250 ease-in-out lg:translate-x-0 -translate-x-full">
+            {{-- Logo & Mobile Close --}}
+            <div class="flex items-center justify-between h-14 px-5 border-b border-slate-100 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">🏥</span>
+                    <span class="font-heading font-bold text-primary-700 text-lg">{{ config('app.name') }}</span>
+                </div>
+                <button type="button" onclick="toggleSidebar()" class="lg:hidden p-1.5 -mr-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors" title="Tutup menu">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
             </div>
 
             {{-- Menu --}}
@@ -50,7 +55,7 @@
             </nav>
 
             {{-- User Info --}}
-            <div class="border-t border-slate-100 px-4 py-3">
+            <div class="border-t border-slate-100 px-4 py-3 shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-semibold">
                         {{ strtoupper(substr(auth()->user()->nama, 0, 1)) }}
@@ -74,13 +79,13 @@
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
 
         {{-- Main Content --}}
-        <div class="flex-1 lg:ml-60">
+        <div class="flex-1 min-w-0 lg:ml-60">
             {{-- Topbar --}}
             <header class="sticky top-0 z-10 flex items-center h-14 px-4 sm:px-6 bg-white border-b border-slate-200 shadow-xs">
                 <button onclick="toggleSidebar()" class="lg:hidden p-2 -ml-2 mr-2 text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <h1 class="font-heading font-bold text-lg text-slate-900">{{ $title ?? 'Dashboard' }}</h1>
+                <h1 class="font-heading font-bold text-lg text-slate-900 truncate">{{ $title ?? 'Dashboard' }}</h1>
             </header>
 
             {{-- Toast Notification --}}
@@ -92,7 +97,7 @@
                      x-transition:leave="transition ease-in duration-200"
                      x-transition:leave-start="opacity-100 translate-y-0"
                      x-transition:leave-end="opacity-0 translate-y-2"
-                     class="fixed top-4 right-4 z-50 flex items-center gap-3 bg-white border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-lg">
+                     class="fixed top-4 right-4 left-4 sm:left-auto sm:right-4 z-50 max-w-sm ml-auto flex items-center gap-3 bg-white border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-lg">
                     <svg class="w-5 h-5 text-green-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     <span class="text-sm font-medium">{{ session('success') }}</span>
                 </div>
@@ -101,14 +106,14 @@
             @if (session('error'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
                      x-transition
-                     class="fixed top-4 right-4 z-50 flex items-center gap-3 bg-white border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg">
+                     class="fixed top-4 right-4 left-4 sm:left-auto sm:right-4 z-50 max-w-sm ml-auto flex items-center gap-3 bg-white border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg">
                     <svg class="w-5 h-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                     <span class="text-sm font-medium">{{ session('error') }}</span>
                 </div>
             @endif
 
             {{-- Page Content --}}
-            <main class="p-4 sm:p-6">
+            <main class="p-4 sm:p-6 min-w-0">
                 {{ $slot }}
             </main>
         </div>

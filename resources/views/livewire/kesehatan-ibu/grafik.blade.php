@@ -103,8 +103,8 @@ new class extends Component
             </div>
         </div>
 
-        <div class="flex items-center gap-2">
-            <a href="{{ route('kesehatan-ibu.periksa', $kehamilan->id) }}" class="inline-flex items-center gap-1.5 h-10 px-4 bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all">
+        <div class="w-full sm:w-auto">
+            <a href="{{ route('kesehatan-ibu.periksa', $kehamilan->id) }}" class="inline-flex items-center justify-center gap-1.5 h-10 px-4 bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all w-full sm:w-auto">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 + Input Pemeriksaan ANC
             </a>
@@ -112,8 +112,8 @@ new class extends Component
     </div>
 
     {{-- Kartu Info Ibu & Kategori IMT --}}
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 mb-6">
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 sm:p-5 mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <div>
                 <span class="text-xs text-slate-400">Nama Ibu Hamil</span>
                 <p class="text-sm font-bold text-slate-900">{{ $kehamilan->ibu->nama }}</p>
@@ -140,7 +140,7 @@ new class extends Component
                 </span>
             </div>
 
-            <div>
+            <div class="col-span-2 sm:col-span-1 lg:col-span-1">
                 <span class="text-xs text-slate-400">Target Kenaikan Total</span>
                 @php
                     $targetStr = match($kehamilan->kategori_imt) {
@@ -176,7 +176,7 @@ new class extends Component
     </div>
 
     {{-- GRAFIK KENAIKAN BERAT BADAN (CANVAS) --}}
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 mb-6">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 sm:p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <div>
                 <h3 class="font-heading font-bold text-slate-800 text-base">Kurva Kenaikan Berat Badan Ibu (kg) vs Usia Kehamilan (Minggu)</h3>
@@ -185,7 +185,7 @@ new class extends Component
         </div>
 
         @if(count($chartPoints) > 0)
-            <div style="height: 380px; position: relative;" wire:ignore>
+            <div class="h-[300px] sm:h-[380px] relative" wire:ignore>
                 <canvas id="chartKiaBumil"></canvas>
             </div>
         @else
@@ -205,7 +205,7 @@ new class extends Component
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="w-full text-left min-w-[880px]">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Tgl Periksa</th>

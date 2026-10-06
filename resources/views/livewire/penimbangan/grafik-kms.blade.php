@@ -101,10 +101,10 @@ new class extends Component
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {{-- Grafik BB --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <h3 class="font-heading font-semibold text-slate-700 mb-4">Berat Badan per Kunjungan (kg)</h3>
             @if(count($chartDataBb) > 0)
-                <div style="height: 350px; position: relative;" wire:ignore>
+                <div class="h-[280px] sm:h-[350px] relative" wire:ignore>
                     <canvas id="chartBb-{{ $anak->id }}"></canvas>
                 </div>
             @else
@@ -116,10 +116,10 @@ new class extends Component
         </div>
 
         {{-- Grafik TB --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <h3 class="font-heading font-semibold text-slate-700 mb-4">Tinggi Badan per Kunjungan (cm)</h3>
             @if(count($chartDataTb) > 0)
-                <div style="height: 350px; position: relative;" wire:ignore>
+                <div class="h-[280px] sm:h-[350px] relative" wire:ignore>
                     <canvas id="chartTb-{{ $anak->id }}"></canvas>
                 </div>
             @else
@@ -138,7 +138,7 @@ new class extends Component
             <h3 class="font-heading font-semibold text-slate-800">Riwayat Penimbangan</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full min-w-[720px]">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal</th>

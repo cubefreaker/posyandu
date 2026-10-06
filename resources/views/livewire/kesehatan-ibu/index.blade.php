@@ -65,7 +65,7 @@ new #[Title('Kesehatan Ibu Hamil (Buku KIA)')] class extends Component
             </div>
         </div>
 
-        <a href="{{ route('kesehatan-ibu.create') }}" class="inline-flex items-center gap-2 h-10 px-5 bg-pink-600 hover:bg-pink-700 text-white font-semibold text-sm rounded-xl transition-all shadow-xs active:scale-[0.98]">
+        <a href="{{ route('kesehatan-ibu.create') }}" class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-pink-600 hover:bg-pink-700 text-white font-semibold text-sm rounded-xl transition-all shadow-xs active:scale-[0.98] w-full sm:w-auto">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             + Registrasi Ibu Hamil
         </a>
@@ -112,14 +112,14 @@ new #[Title('Kesehatan Ibu Hamil (Buku KIA)')] class extends Component
         <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama ibu atau NIK..."
                class="w-full sm:w-80 h-10 px-4 border-[1.5px] border-slate-300 rounded-xl text-sm placeholder:text-slate-400 focus:border-pink-500 focus:ring-[3px] focus:ring-pink-500/20 outline-none transition-all">
 
-        <div class="flex gap-2 w-full sm:w-auto">
-            <button wire:click="$set('filterStatus', 'aktif')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $filterStatus === 'aktif' ? 'bg-pink-600 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
+        <div class="grid grid-cols-3 gap-1.5 w-full sm:w-auto sm:flex sm:gap-2 text-center">
+            <button wire:click="$set('filterStatus', 'aktif')" class="px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $filterStatus === 'aktif' ? 'bg-pink-600 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
                 Kehamilan Aktif
             </button>
-            <button wire:click="$set('filterStatus', 'melahirkan')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $filterStatus === 'melahirkan' ? 'bg-pink-600 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
-                Sudah Melahirkan
+            <button wire:click="$set('filterStatus', 'melahirkan')" class="px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $filterStatus === 'melahirkan' ? 'bg-pink-600 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
+                Melahirkan
             </button>
-            <button wire:click="$set('filterStatus', 'semua')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $filterStatus === 'semua' ? 'bg-pink-600 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
+            <button wire:click="$set('filterStatus', 'semua')" class="px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $filterStatus === 'semua' ? 'bg-pink-600 text-white' : 'bg-white text-slate-600 border border-slate-200' }}">
                 Semua
             </button>
         </div>
@@ -128,7 +128,7 @@ new #[Title('Kesehatan Ibu Hamil (Buku KIA)')] class extends Component
     {{-- Tabel Ibu Hamil --}}
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="w-full text-left min-w-[850px]">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Nama Ibu Hamil</th>

@@ -103,7 +103,7 @@ new class extends Component
             </a>
             <h2 class="font-heading font-bold text-xl text-slate-900">{{ $imunisasiId ? 'Edit Imunisasi' : 'Tambah Imunisasi' }}</h2>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
             <form wire:submit="save" class="space-y-5">
                 {{-- Pilih Anak --}}
                 <div x-data="{ open: false }" @click.outside="open = false" class="relative">
@@ -202,11 +202,11 @@ new class extends Component
                               placeholder="Catatan tambahan..."></textarea>
                 </div>
 
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="submit" class="inline-flex items-center gap-2 h-10 px-6 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97]">
+                <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                    <button type="submit" class="inline-flex items-center justify-center gap-2 h-10 px-6 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] w-full sm:w-auto">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Simpan
                     </button>
-                    <a href="{{ route('imunisasi.index') }}" class="inline-flex items-center h-10 px-6 border border-slate-300 text-slate-600 font-semibold text-sm rounded-[10px] hover:bg-slate-50 transition-all">Batal</a>
+                    <a href="{{ route('imunisasi.index') }}" class="inline-flex items-center justify-center h-10 px-6 border border-slate-300 text-slate-600 font-semibold text-sm rounded-[10px] hover:bg-slate-50 transition-all w-full sm:w-auto">Batal</a>
                 </div>
             </form>
         </div>

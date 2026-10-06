@@ -157,29 +157,29 @@ new #[Title('Laporan')] class extends Component
 
         <a href="{{ $exportUrl }}"
            target="_blank"
-           class="inline-flex items-center gap-2 h-10 px-5 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] {{ ($tipeLaporan === 'ibu' && !$ibuId) || ($tipeLaporan === 'anak' && !$anakId) ? 'opacity-50 pointer-events-none' : '' }}">
+           class="inline-flex items-center justify-center gap-2 h-10 px-5 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-[10px] transition-all active:scale-[0.97] w-full sm:w-auto {{ ($tipeLaporan === 'ibu' && !$ibuId) || ($tipeLaporan === 'anak' && !$anakId) ? 'opacity-50 pointer-events-none' : '' }}">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export PDF
         </a>
     </div>
 
     {{-- Tabs / Tipe Laporan --}}
-    <div class="flex border-b border-slate-200 mb-6">
-        <button wire:click="$set('tipeLaporan', 'periode')" class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors {{ $tipeLaporan === 'periode' ? 'border-primary-500 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">Rekapitulasi Periode</button>
-        <button wire:click="$set('tipeLaporan', 'ibu')" class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors {{ $tipeLaporan === 'ibu' ? 'border-primary-500 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">Laporan per Ibu</button>
-        <button wire:click="$set('tipeLaporan', 'anak')" class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors {{ $tipeLaporan === 'anak' ? 'border-primary-500 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">Laporan per Anak</button>
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto whitespace-nowrap scrollbar-none">
+        <button wire:click="$set('tipeLaporan', 'periode')" class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors shrink-0 {{ $tipeLaporan === 'periode' ? 'border-primary-500 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">Rekapitulasi Periode</button>
+        <button wire:click="$set('tipeLaporan', 'ibu')" class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors shrink-0 {{ $tipeLaporan === 'ibu' ? 'border-primary-500 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">Laporan per Ibu</button>
+        <button wire:click="$set('tipeLaporan', 'anak')" class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors shrink-0 {{ $tipeLaporan === 'anak' ? 'border-primary-500 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">Laporan per Anak</button>
     </div>
 
     {{-- Filter Periode --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 mb-6">
-        <div class="flex flex-col sm:flex-row gap-4 items-end">
-            <div>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end">
+            <div class="w-full sm:w-auto">
                 <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tanggal Awal</label>
-                <input type="date" wire:model.live="startDate" class="h-10 px-3 border-[1.5px] border-slate-300 rounded-[10px] text-sm focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none">
+                <input type="date" wire:model.live="startDate" class="w-full sm:w-auto h-10 px-3 border-[1.5px] border-slate-300 rounded-[10px] text-sm focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none">
             </div>
-            <div>
+            <div class="w-full sm:w-auto">
                 <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Tanggal Akhir</label>
-                <input type="date" wire:model.live="endDate" class="h-10 px-3 border-[1.5px] border-slate-300 rounded-[10px] text-sm focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none">
+                <input type="date" wire:model.live="endDate" class="w-full sm:w-auto h-10 px-3 border-[1.5px] border-slate-300 rounded-[10px] text-sm focus:border-primary-500 focus:ring-[3px] focus:ring-primary-500/20 outline-none">
             </div>
 
             @if($tipeLaporan === 'ibu')
@@ -314,7 +314,7 @@ new #[Title('Laporan')] class extends Component
             </div>
             @endif
 
-            <div class="self-end ml-auto pb-2">
+            <div class="self-start sm:self-end sm:ml-auto pb-1 sm:pb-2">
                 <p class="text-sm font-semibold text-primary-700">{{ $periodeLabel }}</p>
             </div>
         </div>
@@ -406,7 +406,7 @@ new #[Title('Laporan')] class extends Component
                     <h4 class="font-semibold text-slate-700 mb-4 text-sm">Daftar Anak & Status Terakhir (Periode Ini)</h4>
                     @if($dataIbu->anak->count() > 0)
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
                                 <thead>
                                     <tr class="border-b-2 border-slate-100">
                                         <th class="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Nama Anak</th>
@@ -473,7 +473,7 @@ new #[Title('Laporan')] class extends Component
                     <h4 class="font-semibold text-slate-800 mb-4 text-sm border-b border-slate-100 pb-2">Riwayat Penimbangan (Periode Ini)</h4>
                     @if($dataAnak->penimbangan->count() > 0)
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
+                            <table class="w-full text-left border-collapse min-w-[480px]">
                                 <thead>
                                     <tr class="border-b-2 border-slate-100">
                                         <th class="py-2 px-1 text-xs font-semibold text-slate-500">Tanggal</th>
